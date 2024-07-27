@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Socket.IO chat</title>
+    <style>
+        body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+        #input:focus { outline: none; }
+        #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+        #messages { list-style-type: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+        .message-container { display: flex; margin: 10px; flex-direction: column; }
+        .user { align-items: flex-end; }
+        .reply { align-items: flex-start; }
+        .message { background-color: #dcf8c6; padding: 10px; max-width: 60%; border-radius: 10px; min-width: 100px; }
+        .user .message { background-color: #dcf8c6; margin: 10px; border-radius: 10px 10px 0px 10px; }
+        .reply .message { background-color: #f1f0f0; margin: 10px; border-radius: 10px 10px 10px 0px; }
+        .message-header { font-size: 0.8rem; color: #888; }
+        .message-footer { font-size: 0.7rem; color: #888; text-align: right; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages">
+        <div class="user message-container">
+            <div class="message-header">User ID : 0975656....8687</div>
+            <div class="message">
+                hello
+                <div class="message-footer">10:19</div>
+            </div>
+        </div>
+        <div class="reply message-container">
+            <div class="message-header">User ID : 0975656....8687</div>
+            <div class="message">
+                hello
+                <div class="message-footer">10:20</div>
+            </div>
+        </div>
+    </ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+        let userId = null;
+
+        socket.on('connect', () => {
+            userId = socket.id;
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value) {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                socket.emit('chat-message', input.value,`${hours}:${minutes}`);
+                input.value = '';
+            }
+        });
+
+        socket.on('chat-message', (data) => {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = data.userId === userId ? 'user message-container' : 'reply message-container';
+
+            const userIdTag = document.createElement('div');
+            userIdTag.className = 'message-header';
+            userIdTag.textContent = 'User Id : ' + data.userId.substring(0,5) + "......" +  data.userId.substring(data.userId.length-5,data.userId.length);
+
+            const item = document.createElement('div');
+            item.textContent = data.msg;
+            item.className = 'message';
+
+            const timeStamp = document.createElement('div');
+            timeStamp.textContent = data.time;
+            timeStamp.className = 'message-footer';
+
+            item.appendChild(timeStamp);
+            messageContainer.appendChild(userIdTag);
+            messageContainer.appendChild(item);
+            messages.appendChild(messageContainer);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+  </body>
+</html>

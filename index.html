@@ -21,26 +21,11 @@
     </style>
   </head>
   <body>
-    <ul id="messages">
-        <div class="user message-container">
-            <div class="message-header">User ID : 0975656....8687</div>
-            <div class="message">
-                hello
-                <div class="message-footer">10:19</div>
-            </div>
-        </div>
-        <div class="reply message-container">
-            <div class="message-header">User ID : 0975656....8687</div>
-            <div class="message">
-                hello
-                <div class="message-footer">10:20</div>
-            </div>
-        </div>
-    </ul>
+    <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js" integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         const socket = io();
         const form = document.getElementById('form');

@@ -2,10 +2,15 @@ const express = require('express');
 const { join } = require('node:path');
 const http = require('http');
 const socketIO = require('socket.io');
+const cors = require('cors');
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer); // Default path is used
+
+app.use(cors({
+    origin : https://chatify-hazel.vercel.app',
+}));
 
 app.get('/', (req, res) => {
     res.sendFile(join(__dirname, 'index.html'));
